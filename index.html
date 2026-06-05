@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Atreus' Bow (Homework)</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        ws: {
+                            bg: '#0a0202',
+                            panel: 'rgba(30, 5, 5, 0.95)',
+                            spartanRed: '#ef4444',
+                            spartanDark: '#7f1d1d',
+                            gold: '#fbbf24'
+                        }
+                    },
+                    fontFamily: {
+                        epic: ['Cinzel', 'serif'],
+                        base: ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #0a0202;
+            color: #f8fafc;
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-image: 
+                radial-gradient(circle at top, rgba(239, 68, 68, 0.1) 0%, transparent 50%),
+                url("https://www.transparenttextures.com/patterns/black-scales.png");
+        }
+
+        /* Mobile Container Simulation */
+        #mobile-container {
+            width: 100%;
+            max-width: 400px;
+            height: 100vh;
+            max-height: 850px;
+            background-color: #0a0202;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 0 50px rgba(239, 68, 68, 0.2);
+            border: 2px solid #ef4444;
+            border-radius: 4px;
+        }
+
+        @media (max-width: 400px) {
+            #mobile-container { border: none; box-shadow: none; height: 100vh; max-height: none; border-radius: 0; }
+        }
+
+        .btn-option {
+            background: linear-gradient(to right, rgba(30, 5, 5, 0.9), rgba(15, 2, 2, 0.9)); 
+            border: 1px solid #450a0a;
+            color: #f8fafc;
+            font-family: 'Cinzel', serif;
+            font-weight: 700;
+            text-transform: uppercase;
+            padding: 1.25rem 1rem;
+            border-radius: 4px;
+            width: 100%;
+            text-align: center;
+            transition: all 0.2s;
+            position: relative;
+            margin-bottom: 0.75rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.5);
+            letter-spacing: 0.1em;
+        }
+        .btn-option:active { transform: translateY(2px); box-shadow: 0 1px 2px rgba(0,0,0,0.5); }
+        .btn-option:hover:not(.disabled) { border-color: #ef4444; }
+        .btn-option.correct { background: linear-gradient(to right, #b91c1c, #991b1b); border-color: #ef4444; color: #fff; box-shadow: 0 0 15px rgba(239, 68, 68, 0.5); }
+        .btn-option.wrong { background: linear-gradient(to right, #450a0a, #2e0606); border-color: #7f1d1d; color: #fca5a5; box-shadow: 0 0 15px rgba(127, 29, 29, 0.5); }
+        .btn-option.disabled { pointer-events: none; opacity: 0.7; }
+
+        .fade-in { animation: fadeIn 0.3s ease-in forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+
+        /* Praise Toast */
+        .praise-toast {
+            position: absolute; top: 15%; left: 50%; transform: translate(-50%, 0);
+            background: #000; color: #ef4444; border: 2px solid #ef4444;
+            font-family: 'Cinzel', serif; font-weight: bold;
+            padding: 0.5rem 1rem; text-transform: uppercase; letter-spacing: 0.1em;
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.6);
+            opacity: 0; pointer-events: none; z-index: 101; text-align: center;
+            border-radius: 2px;
+        }
+        .toast-anim { animation: toastUp 1.5s ease-out forwards; }
+        @keyframes toastUp {
+            0% { transform: translate(-50%, 20px) scale(0.8); opacity: 0; }
+            20% { transform: translate(-50%, 0) scale(1.1); opacity: 1; }
+            80% { transform: translate(-50%, 0) scale(1); opacity: 1; }
+            100% { transform: translate(-50%, -20px) scale(0.8); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="mobile-container">
+        
+        <!-- HEADER -->
+        <header class="bg-black/90 backdrop-blur-md border-b border-gray-800 p-4 flex justify-between items-center z-10 shrink-0 shadow-lg">
+            <div class="flex items-center gap-3">
+                <span class="text-2xl drop-shadow-[0_0_5px_#ef4444]">🏹</span>
+                <div class="flex flex-col">
+                    <span class="text-[9px] text-gray-400 font-epic tracking-widest uppercase font-bold">Atreus' Bow</span>
+                    <span class="text-white font-base text-xs font-bold tracking-widest uppercase drop-shadow-md">Target Practice</span>
+                </div>
+            </div>
+            <span class="text-ws-spartanRed font-epic font-bold text-[10px] border border-ws-spartanRed px-2 py-0.5 rounded bg-ws-spartanRed/10">A2</span>
+        </header>
+
+        <!-- START SCREEN -->
+        <div id="start-screen" class="flex-1 flex flex-col items-center justify-center p-6 text-center z-10 bg-gradient-to-br from-[#0a0202] to-[#1a0505]">
+            <img src="https://upload.wikimedia.org/wikipedia/en/a/a7/God_of_War_4_cover.jpg" alt="GOW Cover" class="w-full max-w-[200px] object-cover drop-shadow-[0_0_15px_rgba(239,68,68,0.4)] mb-8 border border-ws-spartanRed rounded-sm">
+            <h1 class="text-3xl font-epic font-bold text-white uppercase tracking-widest mb-2 drop-shadow-[0_0_10px_rgba(239,68,68,0.3)]">Ready Aim</h1>
+            <p class="text-gray-400 font-base text-sm mb-10">Shoot the 15 targets using Future WILL to complete your training.</p>
+            <button onclick="startQuiz()" class="w-full bg-gradient-to-r from-ws-spartanRed to-red-900 text-white font-epic font-bold text-lg py-4 uppercase tracking-widest transition-transform hover:scale-105 shadow-[0_0_20px_rgba(239,68,68,0.3)] rounded-sm border-none">Draw Bow</button>
+        </div>
+
+        <!-- QUIZ SCREEN -->
+        <div id="quiz-screen" class="hidden flex-1 flex flex-col p-6 z-10 overflow-y-auto">
+            <div class="flex justify-between items-center mb-6 border-b border-gray-800 pb-2">
+                <span class="font-epic text-xs text-gray-500 uppercase tracking-widest font-bold">Arrow <span id="q-num" class="text-ws-spartanRed">1</span>/15</span>
+                <span class="font-epic text-xs text-gray-500 uppercase tracking-widest font-bold">Hits: <span id="score-text" class="text-ws-gold">0</span></span>
+            </div>
+
+            <div id="question-container" class="flex-1 flex flex-col fade-in justify-center mb-8">
+                <p class="text-[10px] text-ws-spartanRed uppercase tracking-widest mb-3 font-bold font-epic text-center border border-ws-spartanRed/30 rounded py-1 bg-black/50">Take Aim</p>
+                <p id="q-text" class="text-2xl font-bold text-white mb-8 leading-relaxed font-base text-center"></p>
+                
+                <div id="options-container" class="flex flex-col gap-3">
+                    <!-- Options injected via JS -->
+                </div>
+            </div>
+
+            <button id="next-btn" onclick="nextQuestion()" class="hidden w-full mt-auto bg-black text-white border border-gray-600 font-epic font-bold text-base py-4 uppercase tracking-widest shadow-[0_0_15px_rgba(255,255,255,0.1)] hover:border-white transition-colors rounded">Next Arrow ▸</button>
+        </div>
+
+        <!-- END SCREEN -->
+        <div id="end-screen" class="hidden flex-1 flex flex-col items-center justify-center p-6 text-center z-10 bg-[url('https://www.transparenttextures.com/patterns/black-scales.png')] bg-black">
+            <span class="text-7xl mb-6 drop-shadow-[0_0_20px_rgba(239,68,68,0.6)]">🎯</span>
+            <h1 class="text-3xl font-epic font-bold text-white uppercase tracking-widest mb-2 text-ws-spartanRed">Targets Destroyed</h1>
+            <p class="text-gray-400 font-base text-sm font-bold mb-6">Final Accuracy:</p>
+            <div class="text-5xl font-epic font-bold text-white mb-10 border border-ws-spartanRed bg-red-900/20 p-6 shadow-[0_0_30px_rgba(239,68,68,0.3)] rounded">
+                <span id="final-score">0</span><span class="text-2xl text-gray-500">/15</span>
+            </div>
+            <button onclick="location.reload()" class="w-full bg-black border border-gray-700 text-gray-400 font-epic font-bold text-sm py-4 uppercase tracking-widest hover:border-white hover:text-white transition-colors rounded">Restring Bow</button>
+        </div>
+
+        <!-- PRAISE TOAST -->
+        <div id="praise-toast" class="praise-toast">BULLSEYE</div>
+
+        <!-- BOTTOM PROGRESS BAR -->
+        <div class="h-1.5 w-full bg-gray-900 shrink-0 border-t border-gray-800">
+            <div id="progress-bar" class="h-full bg-gradient-to-r from-ws-spartanRed to-red-600 w-0 transition-all duration-300 shadow-[0_0_10px_#ef4444]"></div>
+        </div>
+
+    </div>
+
+    <script>
+        const questions = [
+            { q: "I ________ be better.", options: ["will", "am"], answer: 0 },
+            { q: "We ________ fight the monsters tomorrow.", options: ["will", "are"], answer: 0 },
+            { q: "He ________ help you.", options: ["wills", "will"], answer: 1 },
+            { q: "I ________ not run away.", options: ["will", "am"], answer: 0 },
+            { q: "They ________ survive the cold.", options: ["will", "do will"], answer: 0 },
+            { q: "________ you fight with me?", options: ["Are", "Will"], answer: 1 },
+            { q: "I ________ stop trying.", options: ["won't", "don't will"], answer: 0 },
+            { q: "She ________ be a great warrior.", options: ["will to", "will"], answer: 1 },
+            { q: "We ________ lose this battle.", options: ["not will", "won't"], answer: 1 },
+            { q: "What ________ we do now?", options: ["will", "do"], answer: 0 },
+            { q: "I promise I ________ listen to you.", options: ["will", "will to"], answer: 0 },
+            { q: "________ Kratos find the truth?", options: ["Does", "Will"], answer: 1 },
+            { q: "The journey ________ be easy.", options: ["won't", "isn't will"], answer: 0 },
+            { q: "You ________ need this weapon.", options: ["wills", "will"], answer: 1 },
+            { q: "I ________ forget what you taught me.", options: ["don't", "won't"], answer: 1 }
+        ];
+
+        let currentQ = 0;
+        let score = 0;
+
+        const praises = ["BULLSEYE", "PERFECT AIM", "SPARTAN HIT", "NICE SHOT"];
+
+        function startQuiz() {
+            document.getElementById('start-screen').classList.add('hidden');
+            document.getElementById('quiz-screen').classList.remove('hidden');
+            document.getElementById('quiz-screen').classList.add('flex');
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            const qData = questions[currentQ];
+            document.getElementById('q-num').innerText = currentQ + 1;
+            document.getElementById('q-text').innerHTML = `"${qData.q}"`;
+            
+            const container = document.getElementById('options-container');
+            container.innerHTML = '';
+            
+            qData.options.forEach((opt, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'btn-option';
+                btn.innerHTML = `<span class="text-ws-gold mr-2">></span> ${opt}`;
+                btn.onclick = () => checkAnswer(btn, index);
+                container.appendChild(btn);
+            });
+
+            document.getElementById('next-btn').classList.add('hidden');
+            
+            const qContainer = document.getElementById('question-container');
+            qContainer.classList.remove('fade-in');
+            void qContainer.offsetWidth;
+            qContainer.classList.add('fade-in');
+
+            updateProgress();
+        }
+
+        function checkAnswer(btn, selectedIndex) {
+            const qData = questions[currentQ];
+            const allBtns = document.querySelectorAll('.btn-option');
+            
+            allBtns.forEach(b => b.classList.add('disabled'));
+
+            if (selectedIndex === qData.answer) {
+                btn.classList.add('correct');
+                score++;
+                document.getElementById('score-text').innerText = score;
+                showPraise();
+            } else {
+                btn.classList.add('wrong');
+                allBtns[qData.answer].classList.add('correct'); 
+            }
+
+            const blankedText = qData.q.replace('________', `<span class="${selectedIndex === qData.answer ? 'text-ws-spartanRed' : 'text-gray-500'} underline underline-offset-4">${qData.options[qData.answer]}</span>`);
+            document.getElementById('q-text').innerHTML = `"${blankedText}"`;
+
+            document.getElementById('next-btn').classList.remove('hidden');
+        }
+
+        function nextQuestion() {
+            currentQ++;
+            if (currentQ < questions.length) {
+                loadQuestion();
+            } else {
+                endQuiz();
+            }
+        }
+
+        function endQuiz() {
+            document.getElementById('quiz-screen').classList.add('hidden');
+            document.getElementById('quiz-screen').classList.remove('flex');
+            document.getElementById('end-screen').classList.remove('hidden');
+            document.getElementById('end-screen').classList.add('flex');
+            
+            const finalScoreEl = document.getElementById('final-score');
+            finalScoreEl.innerText = score;
+            if(score < 8) finalScoreEl.classList.add('text-ws-spartanRed');
+
+            document.getElementById('progress-bar').style.width = '100%';
+        }
+
+        function updateProgress() {
+            const progress = (currentQ / questions.length) * 100;
+            document.getElementById('progress-bar').style.width = `${progress}%`;
+        }
+
+        function showPraise() {
+            const toast = document.getElementById('praise-toast');
+            toast.innerText = praises[Math.floor(Math.random() * praises.length)];
+            toast.classList.remove('toast-anim');
+            void toast.offsetWidth;
+            toast.classList.add('toast-anim');
+        }
+    </script>
+</body>
+</html>
